@@ -1,4 +1,4 @@
 # ebitengine-make-a-face-game
-福笑い
+非エンジニア向けのセキュリティゲーム
 HTMX
 Go
