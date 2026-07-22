@@ -11,6 +11,10 @@ type game struct {
 	// background
 	bg_top    *ebiten.Image
 	bg_bottom *ebiten.Image
+	// avatar
+	Gopher1 *ebiten.Image
+	Gopher2 *ebiten.Image
+	message *ebiten.Image
 }
 
 // NewGameはゲームの初期化 background
@@ -29,6 +33,28 @@ func newGame() (*game, error) {
 		return nil, err
 	}
 	g.bg_bottom = bottom
+
+	// 立ち絵画像を読み込む
+	img, _, err := ebitenutil.NewImageFromFile("Gopher1.png")
+	if err != nil {
+		return nil, err
+	}
+	g.Gopher1 = img
+
+	// 仮置き
+	img, _, err = ebitenutil.NewImageFromFile("Gopher2.png")
+	if err != nil {
+		return nil, err
+	}
+	g.Gopher2 = img
+
+	// Message縁画像を読み込む
+	img, _, err = ebitenutil.NewImageFromFile("message.png")
+	if err != nil {
+		return nil, err
+	}
+	g.message = img
+
 	return g, nil
 }
 
@@ -62,6 +88,29 @@ func (g *game) Draw(screen *ebiten.Image) {
 	opBottom.GeoM.Scale(float64(sw)/float64(bw), float64(bottomH)/float64(bh))
 	opBottom.GeoM.Translate(0, float64(bannerH))
 	screen.DrawImage(g.bg_bottom, opBottom)
+
+	gopherScale := 0.35 // 立ち絵の縮小率
+
+	// 立ち絵（Gopher1)を描画
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(gopherScale, gopherScale)
+	op.GeoM.Translate(400.0, 20) // 第1引数が横(X)方向、第2引数が縦(Y)方向
+	screen.DrawImage(g.Gopher1, op)
+
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(gopherScale, gopherScale) //　Gopher2を半分に縮小
+	op.GeoM.Translate(750.0, 0)             // Gopher2を右に1000px並行移動
+	screen.DrawImage(g.Gopher2, op)
+
+	// Messageを描画（縦は上部背景の1/3サイズ、横は画面幅いっぱいに伸ばして、上部背景の下端に底辺を合わせる）
+	mw, mh := g.message.Bounds().Dx(), g.message.Bounds().Dy()
+	msgScaleY := (float64(bannerH) / 3) / float64(mh)
+	msgScaleX := float64(sw) / float64(mw)
+	msgH := float64(mh) * msgScaleY
+	op = &ebiten.DrawImageOptions{}
+	op.GeoM.Scale(msgScaleX, msgScaleY)
+	op.GeoM.Translate(0, float64(bannerH)-msgH)
+	screen.DrawImage(g.message, op)
 }
 
 // Layout(レイアウト) メソッドで画面サイズ（幅と高さ）
@@ -71,7 +120,7 @@ func (g *game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	ebiten.SetWindowTitle("CYBER GUARD")
-	ebiten.SetWindowSize(1280, 720)
+	ebiten.SetWindowSize(1280, 720) // 横1280×縦720ピクセル
 
 	g, err := newGame()
 	if err != nil {
