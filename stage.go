@@ -89,17 +89,21 @@ func (g *game) Draw(screen *ebiten.Image) {
 	opBottom.GeoM.Translate(0, float64(bannerH))
 	screen.DrawImage(g.bg_bottom, opBottom)
 
-	gopherScale := 0.35 // 立ち絵の縮小率
+	// 立ち絵の表示高さ（差し替え前の画像を0.35倍した時の高さに固定。差し替え画像の解像度が変わっても表示サイズが変わらないようにする）
+	const gopher1TargetH = 477 * 0.35 // 元のGopher1(523x477)基準
+	const gopher2TargetH = 541 * 0.35 // 元のGopher2(461x541)基準
 
 	// 立ち絵（Gopher1)を描画
+	gopher1Scale := gopher1TargetH / float64(g.Gopher1.Bounds().Dy())
 	op := &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(gopherScale, gopherScale)
+	op.GeoM.Scale(gopher1Scale, gopher1Scale)
 	op.GeoM.Translate(400.0, 20) // 第1引数が横(X)方向、第2引数が縦(Y)方向
 	screen.DrawImage(g.Gopher1, op)
 
+	gopher2Scale := gopher2TargetH / float64(g.Gopher2.Bounds().Dy())
 	op = &ebiten.DrawImageOptions{}
-	op.GeoM.Scale(gopherScale, gopherScale) //　Gopher2を半分に縮小
-	op.GeoM.Translate(750.0, 0)             // Gopher2を右に1000px並行移動
+	op.GeoM.Scale(gopher2Scale, gopher2Scale) //　Gopher2を半分に縮小
+	op.GeoM.Translate(750.0, 0)               // Gopher2を右に1000px並行移動
 	screen.DrawImage(g.Gopher2, op)
 
 	// Messageを描画（縦は上部背景の1/3サイズ、横は画面幅いっぱいに伸ばして、上部背景の下端に底辺を合わせる）
