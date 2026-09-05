@@ -43,3 +43,6 @@
                                                                         │
                                                                  ★ スコア不要！
                                                                  （何点でも面白い）
+
+
+Ebitengine（ebiten）で作ったゲームを無料で公開する場合、「GitHub Pages + WebAssembly (WASM)」 または 「itch.io」 のどちらかを使うのが開発者コミュニティで圧倒的にメジャーな選択肢です。
